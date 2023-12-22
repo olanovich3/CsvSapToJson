@@ -31,7 +31,7 @@ const parseCsvToObject = (nuevoContenido) => {
     (line) =>
       line['Capítol'] &&
       line['Capítol'].includes('6') &&
-      (line['St.'].includes('07') || line['St.'].includes('09'))
+      (line['St.'].includes('7') || line['St.'].includes('9'))
   )
 
   // MAPEAMOS EL ARRAY PARA QUE LOS OBJETOS VENGAN COMO SALDRÁ EN TK.

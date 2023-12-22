@@ -2,6 +2,7 @@ import { getFiles } from './src/getFiles.js'
 import Triskell from 'triskell'
 import dotenv from 'dotenv'
 import { getParseWritten } from './src/getParseWritten.js'
+import { includeDataObjectParentId } from './utils/utils.js'
 
 dotenv.config({ path: '.env.dev' })
 const HOST_URL = process.env.HOST_URL
@@ -27,13 +28,41 @@ const connectionTK = async () => {
       resolve()
     })
   )
+  try {
+    //QUERY DE CONTRATOS
+    const tkContratos = await new Promise((resolve) =>
+      triskellClient.report.getSelectorData(
+        {
+          repParams: {
+            STORED_SELECTOR_ID: '54'
+          }
+        },
+        (error, res) => {
+          if (error) {
+            console.log('error al obtener contratos')
+          }
 
-  const objectFromCsv = await new Promise((resolve) => {
-    const result = getParseWritten()
-    resolve(result)
-  })
+          resolve(res.data.res)
+        }
+      )
+    )
 
-  console.log('objetoJason', objectFromCsv)
+    const objectSAPFromCsv = await new Promise((resolve) => {
+      const result = getParseWritten()
+      resolve(result)
+    })
+
+    console.log('objetoJason', objectSAPFromCsv)
+
+    const objectSapId = includeDataObjectParentId(objectSAPFromCsv, tkContratos)
+
+    console.log('facturad con ID padres', objectSapId)
+
+
+
+  } catch (error) {
+    console.error('error'.error)
+  }
 }
 
 connectionTK()
