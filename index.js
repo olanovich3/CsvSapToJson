@@ -1,6 +1,7 @@
 import { getFiles } from './src/getFiles.js'
 import Triskell from 'triskell'
 import dotenv from 'dotenv'
+import {TkCreateDataObjects} from './TkCreateDataObjects/index.js'
 import { getParseWritten } from './src/getParseWritten.js'
 import { includeDataObjectParentId } from './utils/utils.js'
 
@@ -58,6 +59,15 @@ const connectionTK = async () => {
 
     console.log('facturad con ID padres', objectSapId)
 
+//CREAMOS FACTURAS SAP EN TRISKELL
+
+const createDataObjects = new TkCreateDataObjects ({
+
+  protocol: 'https',
+  host: HOST_URL,
+  password: PASSWORD_TK,
+  username: USER_NAME_TK
+})
 
 
   } catch (error) {

@@ -1,0 +1,23 @@
+{
+	"name": "tkcreatedataobjects",
+	"version": "1.0.0",
+	"description": "Create dataobjects from a stored selector",
+	"main": "index.js",
+	"type": "module",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"keywords": [
+		"triskell",
+		"create",
+		"dataobjects"
+	],
+	"author": "Daniel Carretas",
+	"license": "ISC",
+	"dependencies": {
+		"http": "^0.0.1-security",
+		"https": "^1.0.0",
+		"triskell": "^1.0.2",
+		"xml-escape": "^1.1.0"
+	}
+}
