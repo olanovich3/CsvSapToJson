@@ -1,7 +1,7 @@
 import { getFiles } from './src/getFiles.js'
 import Triskell from 'triskell'
 import dotenv from 'dotenv'
-import {TkCreateDataObjects} from './TkCreateDataObjects/index.js'
+import TkCreateDataObjectsClass from './TkCreateDataObjects/index.js'
 import { getParseWritten } from './src/getParseWritten.js'
 import { includeDataObjectParentId } from './utils/utils.js'
 
@@ -59,17 +59,37 @@ const connectionTK = async () => {
 
     console.log('facturad con ID padres', objectSapId)
 
-//CREAMOS FACTURAS SAP EN TRISKELL
+    //CREAMOS FACTURAS SAP EN TRISKELL
 
-const createDataObjects = new TkCreateDataObjects ({
+    const createDataObjects = new TkCreateDataObjectsClass({
+      protocol: 'https',
+      host: HOST_URL,
+      password: PASSWORD_TK,
+      username: USER_NAME_TK
+    })
 
-  protocol: 'https',
-  host: HOST_URL,
-  password: PASSWORD_TK,
-  username: USER_NAME_TK
-})
+    await new Promise((resolve) =>
+      createDataObjects.triskell.auth.loginSHA(
+        {
+          password: PASSWORD_TK,
+          username: USER_NAME_TK
+        },
+        resolve
+      )
+    )
 
-
+    try {
+      await new Promise((resolve) =>
+        createDataObjects.proccessStoredRes1(objectSapId, (err, res) => {
+          if (err) {
+            console.log('error al crear factura', err)
+          }
+          resolve(res)
+        })
+      )
+    } catch (error) {
+      console.error('Error al crear factura', error)
+    }
   } catch (error) {
     console.error('error'.error)
   }
