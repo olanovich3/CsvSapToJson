@@ -3,7 +3,7 @@ import Triskell from 'triskell'
 import dotenv from 'dotenv'
 import TkCreateDataObjectsClass from './TkCreateDataObjects/index.js'
 import { getParseWritten } from './src/getParseWritten.js'
-import { includeDataObjectParentId } from './utils/utils.js'
+import { includeDataObjectParentId, updateStageToTK } from './utils/utils.js'
 
 dotenv.config({ path: '.env.dev' })
 const HOST_URL = process.env.HOST_URL
@@ -93,6 +93,49 @@ const connectionTK = async () => {
   } catch (error) {
     console.error('error'.error)
   }
+  //PROCEDEMOS A REALIZAR QUERY DE TODOS LAS FACTURAS PARA PODER ACTUALIZAR STAGE Y ATRIBUTOS
+
+  const tkFacturas = await new Promise((resolve) =>
+    triskellClient.report.getSelectorData(
+      {
+        repParams: {
+          STORED_SELECTOR_ID: '54'
+        }
+      },
+      (error, res) => {
+        if (error) {
+          console.log('error al obtener contratos')
+        }
+
+        resolve(res.data.res)
+      }
+    )
+  )
+  console.log('facturas en triskell', tkFacturas)
+
+  //Parseamos array para actualizar stages
+  
+  const parseToUpdateStage = updateStageToTK(tkFacturas)
+
+  //Actualizamos el stage de los contratos
+
+  try {
+    for (const iterator of parseToUpdateStage) {
+      await new Promise((resolve) => {
+        triskellClient.dataobject.updateLifeCycle(iterator, (error, res) => {
+          if (error) {
+            console.log('error stage', error)
+          }
+          resolve(res)
+        })
+      })
+    }
+  } catch (error) {
+    console.error('Error al actualizar stage:', error)
+    
+  }
+
+  // Parseamos los objetos como quiere Triskell para actualizar sus atributos
 }
 
 connectionTK()
