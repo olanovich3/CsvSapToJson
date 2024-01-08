@@ -1,17 +1,34 @@
 //MAPEO PARA CREAR FACTURAS//
 
 export const csvToTK = (csv) => {
-  return csv.map((item) => {
-    return {
-      object: 'Contratos',
-      name: item.dataobject_name,
-      description: item.dataobject_description,
-      stage: item.stage,
-      pool: 'NONE',
-      parentid: item.lineaPim_id,
-      currency: 5
-    }
-  })
+  return csv
+    .map((item) => {
+      if (
+        item.dataobject_name &&
+        item.dataobject_description &&
+        item.dataobject_parent_id
+      ) {
+        return {
+          object: 'Factura',
+          name: item.dataobject_name,
+          description: item.dataobject_description,
+          stage: 'Default Stage',
+          pool: 'NONE',
+          parentid: item.dataobject_parent_id,
+          currency: 5,
+          'attr_Codigo SAP': item.codi_SAP,
+          attr_Proveedor: item.proveedor,
+          'attr_Validar or': item.validador_factura,
+          'attr_Autorizado OR': item.validador_factura,
+          attr_Importe: item.import,
+          'attr_Fecha Aprovación': item.data_aprovacio,
+          attr_Dirección: item.direccio
+        }
+      } else {
+        console.log('introducir un logger indicando que faltan datos en la factura')
+      }
+    })
+    .filter((item) => item !== undefined)
 }
 
 // Incluir ID del contrato al que pertenece la factura
@@ -30,14 +47,16 @@ export const includeDataObjectParentId = (array1, array2) => {
 //MAPEO ARRAY PARA ACTUALIZAR STAGES
 
 export const updateStageToTK = (stage) => {
-  return stage.map((item) => {
-    if (item.dataobject_id && item.id_stage) {
-      return {
-        dataObjectId: String(item.dataobject_id),
-        newLifecycle: String(item.id_stage)
+  return stage
+    .map((item) => {
+      if (item.dataobject_id && item.id_stage) {
+        return {
+          dataObjectId: String(item.dataobject_id),
+          newLifecycle: String(item.id_stage)
+        }
       }
-    } 
-  }).filter((item) => item !== undefined)
+    })
+    .filter((item) => item !== undefined)
 }
 
 //MAPEO ARRAY PARA ACTUALIZAR CONTRATOS//

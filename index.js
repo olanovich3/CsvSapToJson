@@ -3,7 +3,7 @@ import Triskell from 'triskell'
 import dotenv from 'dotenv'
 import TkCreateDataObjectsClass from './TkCreateDataObjects/index.js'
 import { getParseWritten } from './src/getParseWritten.js'
-import { includeDataObjectParentId, updateStageToTK } from './utils/utils.js'
+import { csvToTK, includeDataObjectParentId, updateStageToTK } from './utils/utils.js'
 
 dotenv.config({ path: '.env.dev' })
 const HOST_URL = process.env.HOST_URL
@@ -53,11 +53,13 @@ const connectionTK = async () => {
       resolve(result)
     })
 
-    console.log('objetoJason', objectSAPFromCsv)
+    console.log('objetoJson', objectSAPFromCsv)
 
     const objectSapId = includeDataObjectParentId(objectSAPFromCsv, tkContratos)
 
     console.log('facturad con ID padres', objectSapId)
+
+    const parseToTK = csvToTK(objectSapId)
 
     //CREAMOS FACTURAS SAP EN TRISKELL
 
@@ -80,7 +82,7 @@ const connectionTK = async () => {
 
     try {
       await new Promise((resolve) =>
-        createDataObjects.proccessStoredRes1(objectSapId, (err, res) => {
+        createDataObjects.proccessStoredRes1(parseToTK, (err, res) => {
           if (err) {
             console.log('error al crear factura', err)
           }
